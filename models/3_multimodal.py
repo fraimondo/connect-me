@@ -115,6 +115,9 @@ for y in ys:
             all_dfs.append(result_df)  # type: ignore
 
         all_dfs = pd.concat(all_dfs)
-        suffix = '_'.join(feature_set)
+        if len(feature_set) > 1:
+            suffix = '_'.join(feature_set)
+        else:
+            suffix = f'{feature_set[0]}'
         all_dfs.to_csv(
             f'results/3_multimodal_{model}_{y}_{suffix}.csv', sep=';')
