@@ -2,6 +2,8 @@ import os
 from pathlib import Path
 
 env = 'julearn'
+targets = ['doc.enrollment', 'doc.discharge']
+models = ['gssvm', 'rf']
 
 cwd = os.getcwd()
 
@@ -10,7 +12,8 @@ log_dir.mkdir(exist_ok=True, parents=True)
 
 cv = 'kfold'
 
-exec_string = f'$(script) --features $(features) --cv {cv}'
+exec_string = (f'$(script) --features $(features) --cv {cv} '
+               '--model $(model) --target $(target)')
 
 preamble = f"""
 # The environment
@@ -47,8 +50,12 @@ with open(submit_fname, 'w') as submit_file:
     submit_file.write(preamble)
     for t_script, t_features in to_run.items():
         for t_f in t_features:
-            submit_file.write(f'script={t_script}\n')
-            submit_file.write(
-                f'log_fname=run_models{t_script}_{t_f}_{cv}\n')
-            submit_file.write(f'features={t_f}\n')
-            submit_file.write('queue\n\n')
+            for t_model in models:
+                for t_target in targets:
+                    submit_file.write(f'script={t_script}\n')
+                    submit_file.write(
+                        f'log_fname=run_models{t_script}_{t_f}_{cv}\n')
+                    submit_file.write(f'features={t_f}\n')
+                    submit_file.write(f'model={t_model}\n')
+                    submit_file.write(f'target={t_target}\n')
+                    submit_file.write('queue\n\n')
