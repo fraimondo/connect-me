@@ -8,8 +8,9 @@ cwd = os.getcwd()
 log_dir = Path(cwd) / 'logs' / 'run_models'
 log_dir.mkdir(exist_ok=True, parents=True)
 
+cv = 'kfold'
 
-exec_string = '$(script) --features $(features) --cv kfold'
+exec_string = f'$(script) --features $(features) --cv {cv}'
 
 preamble = f"""
 # The environment
@@ -48,6 +49,6 @@ with open(submit_fname, 'w') as submit_file:
         for t_f in t_features:
             submit_file.write(f'script={t_script}\n')
             submit_file.write(
-                f'log_fname=run_models{t_script}_{t_f}\n')
+                f'log_fname=run_models{t_script}_{t_f}_{cv}\n')
             submit_file.write(f'features={t_f}\n')
             submit_file.write('queue\n\n')
