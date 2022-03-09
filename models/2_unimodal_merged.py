@@ -11,13 +11,19 @@ ys = ['doc.enrollment', 'doc.discharge']
 # y = ['doc.discharge']
 models = ['gssvm', 'rf']
 
-parser = ArgumentParser(description='Compute unimodal models')
+parser = ArgumentParser(description='Compute unimodal models (same data)')
 
 parser.add_argument('--features', metavar='features', nargs='+', type=int,
                     help='Features set to compute [1-7].',
                     required=True)
 
-feature_set = parser.parse_args().features
+parser.add_argument('--cv', metavar='cv', nargs=1, type=str,
+                    help='CV to use "mc" or "kfold".',
+                    required=True)
+
+args = parser.parse_args()
+feature_set = args.features
+cv = args.cv[0]
 
 logger.info(f'Features set: {feature_set}')
 
@@ -37,7 +43,8 @@ for y in ys:
         if 1 in feature_set:
             X = FMRI_FEATURES
             title = 'FMRI (merged)'
-            result_df = test_input(df_all, X, y, title=title, model=model)
+            result_df = test_input(df_all, X, y, title=title, model=model,
+                                   cv=cv)
             result_df['features'] = 'fmri_merged'  # type: ignore
             result_df['model'] = model  # type: ignore
             all_dfs.append(result_df)
@@ -45,7 +52,8 @@ for y in ys:
         if 2 in feature_set:
             X = EEG_VISUAL_FEATURES
             title = 'EEG visual (merged)'
-            result_df = test_input(df_all, X, y, title=title, model=model)
+            result_df = test_input(df_all, X, y, title=title, model=model,
+                                   cv=cv)
             result_df['features'] = 'eeg_visual_merged'  # type: ignore
             result_df['model'] = model  # type: ignore
             all_dfs.append(result_df)
@@ -53,7 +61,8 @@ for y in ys:
         if 3 in feature_set:
             X = EEG_ABCD
             title = 'EEG abcd (merged)'
-            result_df = test_input(df_all, X, y, title=title, model=model)
+            result_df = test_input(df_all, X, y, title=title, model=model,
+                                   cv=cv)
             result_df['features'] = 'eeg_abcd_merged'  # type: ignore
             result_df['model'] = model  # type: ignore
             all_dfs.append(result_df)
@@ -61,7 +70,8 @@ for y in ys:
         if 4 in feature_set:
             X = EEG_MODEL
             title = 'EEG model (merged)'
-            result_df = test_input(df_all, X, y, title=title, model=model)
+            result_df = test_input(df_all, X, y, title=title, model=model,
+                                   cv=cv)
             result_df['features'] = 'eeg_model_merged'  # type: ignore
             result_df['model'] = model  # type: ignore
             all_dfs.append(result_df)
@@ -71,7 +81,8 @@ for y in ys:
             title = 'EEG features (all, merged)'
             confounds = ['Electrodes']
             result_df = test_input(
-                df_all, X, y, title=title, model=model, confounds=confounds)
+                df_all, X, y, title=title, model=model, cv=cv,
+                confounds=confounds)
 
             result_df['features'] = 'eeg_features_both_merged'  # type: ignore
             result_df['model'] = model  # type: ignore
@@ -82,7 +93,8 @@ for y in ys:
             title = 'EEG features (stim, merged)'
             confounds = ['Electrodes']
             result_df = test_input(
-                df_all, X, y, title=title, model=model, confounds=confounds)
+                df_all, X, y, title=title, model=model, cv=cv,
+                confounds=confounds)
 
             result_df['features'] = 'eeg_features_stim_merged'  # type: ignore
             result_df['model'] = model  # type: ignore
@@ -93,7 +105,8 @@ for y in ys:
             title = 'EEG features (resting, merged)'
             confounds = ['Electrodes']
             result_df = test_input(
-                df_all, X, y, title=title, model=model, confounds=confounds)
+                df_all, X, y, title=title, model=model, cv=cv,
+                confounds=confounds)
 
             result_df[  # type: ignore
                 'features'] = 'eeg_features_resting_merged'

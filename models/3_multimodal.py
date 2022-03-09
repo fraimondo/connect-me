@@ -18,7 +18,13 @@ parser.add_argument('--features', metavar='features', nargs='+', type=int,
                     help='Features set to compute [1-7].',
                     required=True)
 
-feature_set = parser.parse_args().features
+parser.add_argument('--cv', metavar='cv', nargs=1, type=str,
+                    help='CV to use "mc" or "kfold".',
+                    required=True)
+
+args = parser.parse_args()
+feature_set = args.features
+cv = args.cv[0]
 
 logger.info(f'Features set: {feature_set}')
 df_all = get_data(fmri=True, eeg_visual=True, eeg_abcd=True,
@@ -38,7 +44,7 @@ for y in ys:
             title = 'FMRI + EEG resting features (merged)'
             confounds = ['Electrodes']
             result_df = test_input(
-                df_all, X, y, title=title, model=model,
+                df_all, X, y, title=title, model=model, cv=cv,
                 confounds=confounds,
                 deconfound_vars=EEG_RESTING_FEATURES)
             result_df['features'] = 'fmri_eegresting'  # type: ignore
@@ -50,7 +56,7 @@ for y in ys:
             title = 'FMRI + EEG stim features (merged)'
             confounds = ['Electrodes']
             result_df = test_input(
-                df_all, X, y, title=title, model=model,
+                df_all, X, y, title=title, model=model, cv=cv,
                 confounds=confounds,
                 deconfound_vars=EEG_STIM_FEATURES)
             result_df['features'] = 'fmri_eegstim'  # type: ignore
@@ -62,7 +68,7 @@ for y in ys:
             title = 'FMRI + EEG all features (merged)'
             confounds = ['Electrodes']
             result_df = test_input(
-                df_all, X, y, title=title, model=model,
+                df_all, X, y, title=title, model=model, cv=cv,
                 confounds=confounds,
                 deconfound_vars=EEG_STIM_FEATURES + EEG_RESTING_FEATURES)
             result_df['features'] = 'fmri_eegall'  # type: ignore
@@ -73,7 +79,8 @@ for y in ys:
             X = FMRI_FEATURES + EEG_ABCD + EEG_MODEL + EEG_VISUAL_FEATURES
             title = 'FMRI + EEG all but features (merged)'
             confounds = ['Electrodes']
-            result_df = test_input(df_all, X, y, title=title, model=model)
+            result_df = test_input(
+                df_all, X, y, title=title, model=model, cv=cv)
             result_df['features'] = 'fmri_eegmeta'  # type: ignore
             result_df['model'] = model  # type: ignore
             all_dfs.append(result_df)  # type: ignore
@@ -82,7 +89,8 @@ for y in ys:
             X = EEG_ABCD + EEG_MODEL + EEG_VISUAL_FEATURES
             title = 'EEG all but features (merged)'
             confounds = ['Electrodes']
-            result_df = test_input(df_all, X, y, title=title, model=model,)
+            result_df = test_input(
+                df_all, X, y, title=title, model=model, cv=cv,)
             result_df['features'] = 'eegmeta'  # type: ignore
             result_df['model'] = model  # type: ignore
             all_dfs.append(result_df)  # type: ignore
@@ -93,7 +101,7 @@ for y in ys:
             title = 'EEG all (merged)'
             confounds = ['Electrodes']
             result_df = test_input(
-                df_all, X, y, title=title, model=model,
+                df_all, X, y, title=title, model=model, cv=cv,
                 confounds=confounds,
                 deconfound_vars=EEG_STIM_FEATURES + EEG_RESTING_FEATURES)
             result_df['features'] = 'eegall'  # type: ignore
@@ -107,7 +115,7 @@ for y in ys:
             title = 'fMRI + EEG all (merged)'
             confounds = ['Electrodes']
             result_df = test_input(
-                df_all, X, y, title=title, model=model,
+                df_all, X, y, title=title, model=model, cv=cv,
                 confounds=confounds,
                 deconfound_vars=EEG_STIM_FEATURES + EEG_RESTING_FEATURES)
             result_df['features'] = 'all'  # type: ignore

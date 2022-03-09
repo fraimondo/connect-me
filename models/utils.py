@@ -1,7 +1,8 @@
 import pandas as pd
 from pathlib import Path
 import julearn
-from sklearn.model_selection import StratifiedShuffleSplit, StratifiedKFold
+from sklearn.model_selection import RepeatedStratifiedKFold, \
+    StratifiedShuffleSplit, StratifiedKFold
 
 TARGETS = ['doc.enrollment', 'doc.discharge']
 FMRI_FEATURES = [
@@ -113,9 +114,16 @@ def get_eeg_features(electrodes='all', kind='all'):
 
 
 def test_input(
-        df, X, y, title, model, confounds=None,
+        df, X, y, title, model, cv, confounds=None,
         deconfound_vars=None):
-    cv = StratifiedShuffleSplit(n_splits=100, test_size=0.3, random_state=42)
+    if cv == 'kfold':
+        cv = RepeatedStratifiedKFold(
+            n_splits=5, n_repeats=100, random_state=42)
+    elif cv == 'mc':
+        cv = StratifiedShuffleSplit(
+            n_splits=100, test_size=0.3, random_state=42)
+    else:
+        raise ValueError('Unknown CV scheme ["kfold" or "mc"]')
 
     extra_params = {}
     if model == 'svm':
@@ -145,7 +153,6 @@ def test_input(
         pos_labels='nonUWS', scoring=['roc_auc', 'precision', 'recall'],
         cv=cv, confounds=confounds, **extra_params
     )
-
     print('=============================')
     print(title)
     print(cv_results.mean())  # type: ignore

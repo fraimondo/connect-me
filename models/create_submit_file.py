@@ -9,7 +9,7 @@ log_dir = Path(cwd) / 'logs' / 'run_models'
 log_dir.mkdir(exist_ok=True, parents=True)
 
 
-exec_string = '$(script) --features $(features)'
+exec_string = '$(script) --features $(features) --cv kfold'
 
 preamble = f"""
 # The environment

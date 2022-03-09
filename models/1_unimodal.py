@@ -19,7 +19,13 @@ parser.add_argument('--features', metavar='features', nargs='+', type=int,
                     help='Features set to compute [1-7].',
                     required=True)
 
-feature_set = parser.parse_args().features
+parser.add_argument('--cv', metavar='cv', nargs=1, type=str,
+                    help='CV to use "mc" or "kfold".',
+                    required=True)
+
+args = parser.parse_args()
+feature_set = args.features
+cv = args.cv[0]
 
 logger.info(f'Features set: {feature_set}')
 
@@ -32,7 +38,7 @@ for y in ys:
             df = get_data(fmri=True)
             X = FMRI_FEATURES
             title = 'FMRI (not merged)'
-            result_df = test_input(df, X, y, title=title, model=model)
+            result_df = test_input(df, X, y, title=title, model=model, cv=cv)
             result_df['features'] = 'fmri_full'  # type: ignore
             result_df['model'] = model  # type: ignore
             all_dfs.append(result_df)
@@ -41,7 +47,7 @@ for y in ys:
             df = get_data(eeg_visual=True)
             X = EEG_VISUAL_FEATURES
             title = 'EEG VISUAL (not merged)'
-            result_df = test_input(df, X, y, title=title, model=model)
+            result_df = test_input(df, X, y, title=title, model=model, cv=cv)
             result_df['features'] = 'eeg_visual_full'  # type: ignore
             result_df['model'] = model  # type: ignore
             all_dfs.append(result_df)
@@ -50,7 +56,7 @@ for y in ys:
             df = get_data(eeg_abcd=True)
             X = EEG_ABCD
             title = 'EEG ABCD (not merged)'
-            result_df = test_input(df, X, y, title=title, model=model)
+            result_df = test_input(df, X, y, title=title, model=model, cv=cv)
             result_df['features'] = 'eeg_abcd_full'  # type: ignore
             result_df['model'] = model  # type: ignore
             all_dfs.append(result_df)
@@ -59,7 +65,7 @@ for y in ys:
             X = EEG_MODEL
             df = get_data(eeg_model=True)
             title = 'EEG MODEL (not merged)'
-            result_df = test_input(df, X, y, title=title, model=model)
+            result_df = test_input(df, X, y, title=title, model=model, cv=cv)
             result_df['features'] = 'eeg_model_full'  # type: ignore
             result_df['model'] = model  # type: ignore
             all_dfs.append(result_df)
@@ -70,7 +76,7 @@ for y in ys:
             confounds = ['Electrodes']
             title = 'EEG Features (all, not merged)'
             result_df = test_input(
-                df, X, y, title=title, confounds=confounds, model=model)
+                df, X, y, title=title, confounds=confounds, model=model, cv=cv)
 
             result_df['features'] = 'eeg_features_both_full'  # type: ignore
             result_df['model'] = model  # type: ignore
@@ -82,7 +88,7 @@ for y in ys:
             confounds = ['Electrodes']
             title = 'EEG Features (stim, not merged)'
             result_df = test_input(
-                df, X, y, title=title, confounds=confounds, model=model)
+                df, X, y, title=title, confounds=confounds, model=model, cv=cv)
 
             result_df['features'] = 'eeg_features_stim_full'  # type: ignore
             result_df['model'] = model  # type: ignore
@@ -94,7 +100,7 @@ for y in ys:
             confounds = ['Electrodes']
             title = 'EEG Features (resting, not merged)'
             result_df = test_input(
-                df, X, y, title=title, confounds=confounds, model=model)
+                df, X, y, title=title, confounds=confounds, model=model, cv=cv)
 
             result_df['features'] = 'eeg_features_resting_full'  # type: ignore
             result_df['model'] = model  # type: ignore
