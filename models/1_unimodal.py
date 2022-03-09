@@ -36,6 +36,7 @@ y = args.target[0]
 logger.info(f'Features set: {feature_set}')
 logger.info(f'Model: {model}')
 logger.info(f'Target: {y}')
+logger.info(f'CV: {cv}')
 out_path = Path(__file__).parent / 'results' / cv
 out_path.mkdir(parents=True, exist_ok=True)
 
