@@ -54,7 +54,8 @@ with open(submit_fname, 'w') as submit_file:
                 for t_target in targets:
                     submit_file.write(f'script={t_script}\n')
                     submit_file.write(
-                        f'log_fname=run_models{t_script}_{t_f}_{cv}\n')
+                        f'log_fname=run_models{t_script}_{t_f}_{cv}_'
+                        f'{t_model}_{t_target}\n')
                     submit_file.write(f'features={t_f}\n')
                     submit_file.write(f'model={t_model}\n')
                     submit_file.write(f'target={t_target}\n')
