@@ -1,3 +1,4 @@
+from pathlib import Path
 import julearn
 from julearn.utils import logger
 import pandas as pd
@@ -30,7 +31,8 @@ logger.info(f'Features set: {feature_set}')
 # Now do the same thing, but only with the subjects that have all data
 df_all = get_data(fmri=True, eeg_visual=True, eeg_abcd=True,
                   eeg_model=True, eeg_features=True)
-
+out_path = Path(__file__).parent / 'results' / cv
+out_path.mkdir(parents=True, exist_ok=True)
 for y in ys:
     for model in models:
         all_dfs = []
@@ -119,4 +121,4 @@ for y in ys:
         else:
             suffix = f'{feature_set[0]}'
         all_dfs.to_csv(
-            f'results/2_unimodalmerged_{model}_{y}_{suffix}.csv', sep=';')
+            out_path / f'2_unimodalmerged_{model}_{y}_{suffix}.csv', sep=';')
