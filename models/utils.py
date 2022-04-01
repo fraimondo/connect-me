@@ -14,12 +14,14 @@ FMRI_FEATURES = [
 EEG_VISUAL_FEATURES = ['eeg.visual.synek']
 EEG_ABCD = ['abcd']
 EEG_MODEL = ['pmcs.rest', 'pmc.stim']
+AGESEX = ['age', 'sex']
 
 _map = {'A': 1, 'B': 2, 'C': 3, 'D': 4}
 
 
 def get_data(fmri=False, eeg_visual=False, eeg_abcd=False, eeg_model=False,
-             eeg_features=False, eeg_electrodes='all', eeg_kind='all'):
+             eeg_features=False, agesex=False,
+             eeg_electrodes='all', eeg_kind='all'):
     t_path = Path(__file__).parent.parent / 'data' / 'dataset.csv'
     df = pd.read_csv(t_path, sep=';', decimal=',')
     to_keep = TARGETS.copy() + ['Id']
@@ -31,6 +33,8 @@ def get_data(fmri=False, eeg_visual=False, eeg_abcd=False, eeg_model=False,
         to_keep += EEG_ABCD
     if eeg_model is True:
         to_keep += EEG_MODEL
+    if agesex is True:
+        to_keep += AGESEX
 
     t_df = df[to_keep]
     # Drop NANS
@@ -44,6 +48,9 @@ def get_data(fmri=False, eeg_visual=False, eeg_abcd=False, eeg_model=False,
 
     if eeg_model is True:
         t_df[EEG_MODEL] = t_df[EEG_MODEL].astype(float)
+
+    if agesex is True:
+        t_df['sex'] = (t_df['sex'] == 'Female').astype(int)
 
     t_df = t_df.rename(columns={'Id': 'Subject'}).set_index('Subject')
     if eeg_features is True:
