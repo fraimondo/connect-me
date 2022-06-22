@@ -21,9 +21,16 @@ _map = {'A': 1, 'B': 2, 'C': 3, 'D': 4}
 
 def get_data(fmri=False, eeg_visual=False, eeg_abcd=False, eeg_model=False,
              eeg_features=False, agesex=False,
-             eeg_electrodes='all', eeg_kind='all'):
+             eeg_electrodes='all', eeg_kind='all',
+             notwlst=False):
     t_path = Path(__file__).parent.parent / 'data' / 'dataset.csv'
     df = pd.read_csv(t_path, sep=';', decimal=',')
+
+    if notwlst is True:
+        df = df[df['WLST'] == 0]
+        print('Removing WLST patients')
+        print(f'N Samples: {len(df)}')
+
     to_keep = TARGETS.copy() + ['Id']
     if fmri is True:
         to_keep += FMRI_FEATURES
